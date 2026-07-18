@@ -1,0 +1,21 @@
+{
+  "name": "gloria-wa-bot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Gloria Naturals out-of-stock WhatsApp alert. Runs on a spare Android phone via Termux (Baileys, no browser). Sends from a dedicated number to your own numbers, every 3 days.",
+  "type": "commonjs",
+  "scripts": {
+    "link": "node link.js",
+    "send": "node send-now.js",
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "baileys": "7.0.0-rc13",
+    "dotenv": "^16.4.5",
+    "node-cron": "^3.0.3",
+    "pino": "^9.5.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
