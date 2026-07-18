@@ -43,7 +43,10 @@ nano .env      # fill SHOPIFY_ADMIN_TOKEN, SENDER_NUMBER, RECIPIENTS  (Ctrl+O, E
 ```
 - `SENDER_NUMBER` = the dedicated number, digits only (e.g. `9715XXXXXXXX`).
 - `RECIPIENTS` = your own number(s), comma-separated.
-- `SHOPIFY_ADMIN_TOKEN` = the same Custom App token (read_products) used by the email bot.
+- `SHOPIFY_CLIENT_ID` + `SHOPIFY_CLIENT_SECRET` = from a Shopify **Dev Dashboard**
+  app (dev.shopify.com) with the `read_products` scope, installed on your store —
+  the same credentials the email bot uses. Copy them from the app's Settings page.
+  (Shopify removed the old in-admin "reveal token" flow on 2026-01-01.)
 
 **5. Link the number (pairing code, not QR):**
 ```bash
