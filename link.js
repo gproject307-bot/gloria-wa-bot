@@ -39,7 +39,9 @@ const SENDER = (process.env.SENDER_NUMBER || '').replace(/\D/g, '');
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect, qr } = update;
 
-    if (!requested && !sock.authState.creds.registered && (connection === 'connecting' || !!qr)) {
+    // Request ONLY on the qr event: qr = socket fully ready for pairing.
+    // ('connecting' fires too early on slow links -> "Connection Closed".)
+    if (!requested && !sock.authState.creds.registered && !!qr) {
       requested = true;
       try {
         const code = await sock.requestPairingCode(SENDER);
