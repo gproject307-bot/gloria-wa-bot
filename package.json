@@ -7,13 +7,15 @@
   "scripts": {
     "link": "node link.js",
     "send": "node send-now.js",
-    "start": "node bot.js"
+    "start": "node bot.js",
+    "link:qr": "node link-qr.js"
   },
   "dependencies": {
     "baileys": "7.0.0-rc13",
     "dotenv": "^16.4.5",
     "node-cron": "^3.0.3",
-    "pino": "^9.5.0"
+    "pino": "^9.5.0",
+    "qrcode": "^1.5.4"
   },
   "engines": {
     "node": ">=20"
