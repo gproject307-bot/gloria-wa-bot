@@ -12,7 +12,7 @@
  *       "Link with phone number instead" -> enter the code printed here.
  */
 require('dotenv').config();
-const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, delay } = require('baileys');
+const { default: makeWASocket, useMultiFileAuthState, fetchLatestWaWebVersion, delay } = require('baileys');
 const pino = require('pino');
 
 const SENDER = (process.env.SENDER_NUMBER || '').replace(/\D/g, '');
@@ -23,7 +23,10 @@ const SENDER = (process.env.SENDER_NUMBER || '').replace(/\D/g, '');
     process.exit(2);
   }
   const { state, saveCreds } = await useMultiFileAuthState('auth');
-  const { version } = await fetchLatestBaileysVersion();
+  // NOTE: fetchLatestBaileysVersion() returns a STALE version in 7.0.0-rc13 and
+  // WhatsApp rejects pairing with it ("Couldn't link device"). Baileys #2679.
+  const { version } = await fetchLatestWaWebVersion();
+  console.log('Using WA Web version:', version.join('.'));
   const sock = makeWASocket({
     version,
     auth: state,
@@ -32,10 +35,15 @@ const SENDER = (process.env.SENDER_NUMBER || '').replace(/\D/g, '');
     printQRInTerminal: false,
   });
   sock.ev.on('creds.update', saveCreds);
-  sock.ev.on('connection.update', ({ connection }) => {
+  sock.ev.on('connection.update', ({ connection, lastDisconnect }) => {
     if (connection === 'open') {
       console.log('\n✅ Linked and ready. Test it now with:  npm run send');
       setTimeout(() => process.exit(0), 2000);
+    } else if (connection === 'close') {
+      const err = lastDisconnect && lastDisconnect.error;
+      const code = err && err.output && err.output.statusCode;
+      console.error('\n❌ Connection closed. statusCode:', code, '| reason:', (err && err.message) || 'unknown');
+      console.error('   (If this happened right after entering the code, send this output to Claude.)');
     }
   });
 
