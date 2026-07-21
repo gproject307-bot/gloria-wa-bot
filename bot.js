@@ -12,7 +12,8 @@ const { makeSock, sendText, DisconnectReason } = require('./lib/wa');
 const { getStockReport } = require('./lib/shopify');
 
 const RECIPIENTS = (process.env.RECIPIENTS || '').split(',').map((s) => s.trim()).filter(Boolean);
-const CRON = process.env.CRON || '0 6 */3 * *'; // ~every 3 days, 06:00 UTC = 10:00 Gulf
+const CRON = process.env.CRON || '0 5 * * *'; // 05:00 UTC = 09:00 Gulf
+const CRON_TZ = process.env.CRON_TZ || 'UTC'; // interpret CRON in this tz (not phone-local)
 
 let sock = null;
 let ready = false;
@@ -66,7 +67,7 @@ async function job() {
     process.exit(2);
   }
   await start();
-  cron.schedule(CRON, job);
-  console.log(ts(), 'bot up | schedule:', CRON, '| recipients:', RECIPIENTS.join(', '));
+  cron.schedule(CRON, job, { timezone: CRON_TZ });
+  console.log(ts(), 'bot up | schedule:', CRON, '(' + CRON_TZ + ') = 09:00 Gulf | recipients:', RECIPIENTS.join(', '));
   console.log('Tip: send a test immediately with `npm run send` in another Termux session.');
 })();
