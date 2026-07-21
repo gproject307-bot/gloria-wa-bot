@@ -68,6 +68,10 @@ async function job() {
   }
   await start();
   cron.schedule(CRON, job, { timezone: CRON_TZ });
-  console.log(ts(), 'bot up | schedule:', CRON, '(' + CRON_TZ + ') = 09:00 Gulf | recipients:', RECIPIENTS.join(', '));
+  const cp = CRON.split(' ');
+  const gulf = CRON_TZ === 'UTC'
+    ? `${String((parseInt(cp[1], 10) + 4) % 24).padStart(2, '0')}:${cp[0].padStart(2, '0')} Gulf`
+    : `${cp[1]}:${cp[0]} ${CRON_TZ}`;
+  console.log(ts(), 'bot up | schedule:', CRON, '(' + CRON_TZ + ') =', gulf, '| recipients:', RECIPIENTS.join(', '));
   console.log('Tip: send a test immediately with `npm run send` in another Termux session.');
 })();
